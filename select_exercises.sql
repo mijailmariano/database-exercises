@@ -76,7 +76,7 @@ select distinct(name) from albums where genre = "Rock";
 			-- 'Sgt. Pepper\'s Lonely Hearts Club Band'
 			-- 'Supernatural'
 		-- b. these query results do not return 'hard rock' or 'progressive rock' because we are scripting the query to return values with an exact string.
-		-- b. [continued] if we wanted to return all values that contained the string 'Rock' as genre than we would code a <like> "%Rock" command instead of equals string.
+		-- b. [continued] if we wanted to return all values that contained the string 'Rock' in genre than we would code a <like> "%Rock%" command instead of <equals> "Rock"
 
 -- 5. Be sure to add, commit, and push your work.
 
