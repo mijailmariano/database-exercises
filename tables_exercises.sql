@@ -1,9 +1,3 @@
-use employees;
-
-show tables;
-
-describe employees;
-
 -- 3. use employees;
 -- 4. show tables;
 -- 5.  describle employees;
@@ -14,6 +8,11 @@ describe employees;
 -- 9. joined by 'dept_emp' table
 -- 10. show create Table dept_manager;
 
+use employees;
+
+show tables;
+
+describe employees;
 
 show create Table dept_manager;
 -- CREATE TABLE `dept_manager` (
