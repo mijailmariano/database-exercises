@@ -14,6 +14,7 @@ select count(first_name) from employees where first_name in ("Irena", "Vidya", "
 	-- 709 records of employees whose first name are either "Irena", "Vidya", or "Maya"
 
 -- 3. Find all current or previous employees with first names 'Irena', 'Vidya', or 'Maya', as in Q2, but use OR instead of IN. Enter a comment with the number of records returned. Does it match number of rows from Q2?
+# (clarification) "Q2" refers to "question number 2" and NOT "financial period Jan-Mar"
 select count(distinct(emp_no)) from employees where (first_name = "Irena" and month(hire_date) between "1" and "3") or (first_name = "Vidya" and month(hire_date) between "1" and "3") or (first_name = "Maya" and month(hire_date) between "1" and "3");
 	-- 188 employees with either names "Irena", "Vidya", or "Maya" were hire in Q2 months (Jan-Mar)
 select count(distinct(emp_no)) from employees where month(hire_date) between "1" and "3"; # this is the total number of entries/employees hired in Q2 
@@ -89,9 +90,12 @@ select first_name, last_name from employees where first_name in ("Irena", "Vidya
 -- 5. Write a query to to find all employees whose last name starts and ends with 'E'. Sort the results by their employee number. Enter a comment with the number of employees returned, the first employee number and their first and last name, and the last employee number with their first and last name.
 select count(emp_no) from employees where last_name like "e%" and last_name like "%e" order by emp_no asc;
 select emp_no, first_name, last_name from employees where last_name like "e%" and last_name like "%e" order by emp_no asc;
-	-- 899 total returned employees that meet these conditions
+# can also write as LIKE "e%e"
+    
+    -- 899 total returned employees that meet these conditions
     -- (10021) Ramzi Erde...first employee number
 	-- (499648) Tadahiro Erde...last employee number
+    
     
 -- 6. Write a query to to find all employees whose last name starts and ends with 'E'. Sort the results by their hire date, so that the newest employees are listed first. Enter a comment with the number of employees returned, the name of the newest employee, and the name of the oldest employee.
 select count(distinct(emp_no)) from employees where last_name like "e%" and last_name like "%e";
@@ -102,8 +106,9 @@ select hire_date, first_name, last_name from employees where last_name like "e%"
 
 
 -- 7. Find all employees hired in the 90s and born on Christmas. Sort the results so that the oldest employee who was hired last is the first result. Enter a comment with the number of employees returned, the name of the oldest employee who was hired last, and the name of the youngest employee who was hired first.
-select count(distinct(emp_no)) from employees where year(hire_date) between "1990" and "1999" and month(hire_date) = "12" and day(hire_date) = "25"; #346
-select hire_date, birth_date, first_name, last_name from employees where year(hire_date) between "1990" and "1999" and month(hire_date) = "12" and day(hire_date) = "25" order by birth_date asc, hire_date asc;
- # 346 total employees returned meeting these conditions
- # (oldest employee and who was hired last) Lucian Menhoudj
+select count(distinct(emp_no)) from employees where year(hire_date) between "1990" and "1999" and month(birth_date) = "12" and day(birth_date) = "25"; #362
+select hire_date, birth_date, first_name, last_name from employees where year(hire_date) between "1990" and "1999" and month(birth_date) = "12" and day(birth_date) = "25" order by birth_date desc, hire_date asc;
+ # 362 total employees returned meeting these conditions
+ # (oldest employee and last hired/newest on the team) Khun Bernini
+ # (youngest employee and first hired/oldest on team) Douadi Pettis
 

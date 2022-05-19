@@ -35,7 +35,10 @@ select count(distinct(emp_no)) from employees where last_name like "e%";
     select count(distinct(emp_no)) from employees where last_name like "e%" or last_name like "%e";
 			-- there are 30,723 employees whose last name eiher starts or ends with the letter "E"
 	-- b. How many employees have a last name that ends with E, but does not start with E?
-select count(distinct(emp_no)) from employees where last_name like "%e" and last_name not like "e%";
+select count(distinct(emp_no)) 
+from employees 
+where last_name like "%e" 
+and last_name not like "e%";
 			-- there are 23,393 employees whose last name ends with the letter "E" and does NOT begin with the letter "E"
 
 -- 7. Find all current or previous employees employees whose last name starts and ends with 'E'. 
@@ -49,6 +52,12 @@ select count(distinct(emp_no)) from employees where last_name like "%e" and last
 -- 8. Find all current or previous employees hired in the 90s. Enter a comment with the number of employees returned.
 select count(distinct(emp_no)) from employees where year(hire_date) between "1990" and "1999";
 	-- 135,214 employees had hire dates between 1990-1999 
+
+# can also write as
+select count(*)
+from employees
+where hire_date 
+like "199%";
 
 -- 9. Find all current or previous employees born on Christmas. Enter a comment with the number of employees returned.
 select count(distinct(emp_no)) from employees where month(hire_date) = "12" and day(hire_date) = "25";

@@ -16,20 +16,26 @@ select distinct(last_name) from employees order by last_name desc limit 10;
 -- 10 'Zongker'
 
 -- 3. Find all previous or current employees hired in the 90s and born on Christmas. Find the first 5 employees hired in the 90's by sorting by hire date and limiting your results to the first 5 records. Write a comment in your code that lists the five names of the employees returned.
-select hire_date, first_name, last_name from employees where year(hire_date) between "1990" and "1999" and month(hire_date) = "12" and day(hire_date) = "25" order by hire_date asc limit 5;
--- 1 '1990-12-25','Yinghua','Dredge'
--- 2 '1990-12-25','Jinpo','Langford'
--- 3 '1990-12-25','Tiina','Speek'
--- 4 '1990-12-25','Takahira','Spataro'
--- 5 '1990-12-25','Jaber','Piveteau'
+select hire_date, first_name, last_name from employees where year(hire_date) between "1990" and "1999" and month(birth_date) = "12" and day(birth_date) = "25" order by hire_date asc limit 5;
+-- '1990-01-01','Alselm','Cappello'
+-- '1990-01-03','Utz','Mandell'
+-- '1990-01-04','Bouchung','Schreiter'
+-- '1990-01-05','Baocai','Kushner'
+-- '1990-01-10','Petter','Stroustrup'
+
 
 -- 4. Try to think of your results as batches, sets, or pages. The first five results are your first page. The five after that would be your second page, etc. Update the query to find the tenth page of results.
 -- LIMIT and OFFSET can be used to create multiple pages of data. What is the relationship between OFFSET (number of results to skip), LIMIT (number of results per page), and the page number?
-select hire_date, first_name, last_name from employees where year(hire_date) between "1990" and "1999" and month(hire_date) = "12" and day(hire_date) = "25" order by hire_date asc limit 5 offset 50;
--- 10th page would include the entries:
-	-- 51 '1990-12-25','Shahid','Nations'
-	-- 52 '1990-12-25','Ramya','Peek'
-	-- 53 '1990-12-25','Jeanne','Schlumberger'
-	-- 54 '1990-12-25','Ayonca','Luby'
-	-- 55 '1990-12-25','Kwangjo','Cardazo'
+select hire_date, first_name, last_name from employees where year(hire_date) between "1990" and "1999" and month(birth_date) = "12" and day(birth_date) = "25" order by hire_date asc limit 5 offset 45;
+# formula can be thought of 
+# n page = limit 5 offset (n - 1)*5
+
+	-- '1990-07-18','Pranay','Narwekar'
+	-- '1990-07-18','Marjo','Farrow'
+	-- '1990-08-05','Ennio','Karcich'
+	-- '1990-08-06','Dines','Lubachevsky'
+	-- '1990-08-06','Ipke','Fontan'
+    
+  
+
 
