@@ -28,7 +28,7 @@ select distinct(name) from albums where artist = "Pink Floyd";
 		-- two (2) albums by Pink Floyd ('The Dark Side of the Moon', 'The Wall')
         
 	-- b. The year Sgt. Peppers Lonely Hearts Club Band was released
-select release_date from albums where name = "Sgt. Pepper's Lonely Hearts Club Band";
+select release_date as year from albums where name = "Sgt. Pepper's Lonely Hearts Club Band";
 		-- 1967 was the release date for Sgt. Pepper's Lonely Hearts Club Band
         
 	-- c. The genre for the album Nevermind
@@ -80,4 +80,6 @@ select distinct(name) from albums where genre = "Rock";
 
 -- 5. Be sure to add, commit, and push your work.
 
+
+select sales from albums;
 
