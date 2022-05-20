@@ -10,12 +10,11 @@ from titles;
 
 		# there are seven (7) unique titles from the titles table
 
-
 -- 3. Write a query to to find a list of all unique last names of all employees that start and end with 'E' using GROUP BY.
 select last_name
 from employees
 where last_name
-like "e%%e"
+like "e%e"
 group by last_name;
 
 		# there are five (5) unique last names that start and end with the letter "e"
@@ -23,7 +22,7 @@ group by last_name;
 select count(distinct(last_name)) # this is a secondary query check for the "GROUP BY" query above which should return similar results
 from employees
 where last_name
-like "e%%e"; # check successful
+like "e%e"; # check successful
 
 
 -- 4. Write a query to to find all unique combinations of first and last names of all employees whose last names start and end with 'E'.
@@ -31,13 +30,13 @@ like "e%%e"; # check successful
 select first_name, last_name
 from employees
 where last_name 
-like "e%%e"
+like "e%e"
 group by first_name, last_name;
 
 select count(distinct(first_name)) # unique implying (1), therefore this query is essentially returning back all unique first and last name combinations = 640 
 from employees
 where last_name 
-like "e%%e";
+like "e%e";
 
 
 -- 5. Write a query to find the unique last names with a 'q' but not 'qu'. Include those names in a comment in your sql code.
@@ -45,7 +44,7 @@ like "e%%e";
 select first_name, last_name
 from employees
 where last_name 
-like "%q%" # the '%' percentage sign used here reads, identify last names that contain the letter 'q'
+like "%q%" # the '%' percentage sign used here reads, identify all last names containing the letter 'q'
 and last_name 
 not like "%qu%"; # the 'qu' in between % signs reads, AND do not identify last names that contain the 'qu' combination
 
@@ -97,13 +96,10 @@ ORDER BY first_name ASC;
                     '_',
                     DATE_FORMAT(birth_date, '%m'),
                     DATE_FORMAT(birth_date, '%y'))) AS username,
-                    count(*) as number_of_username,
-    first_name,
-    last_name,
-    birth_date
+                    count(*) as number_of_username
 FROM
     employees
-group by first_name, last_name, birth_date
+group by username
 order by number_of_username desc;
 
 
@@ -115,7 +111,6 @@ order by number_of_username desc;
 -- c. BONUS: How many duplicate usernames are there?
 
 
-        # there are six (6) duplicate usernames
         
 SELECT 
     LOWER(CONCAT(SUBSTR(first_name, 1, 1),
@@ -123,13 +118,10 @@ SELECT
                     '_',
                     DATE_FORMAT(birth_date, '%m'),
                     DATE_FORMAT(birth_date, '%y'))) AS username,
-                    count(*) as number_of_same_username,
-    first_name,
-    last_name,
-    birth_date
+                    count(*) as number_of_same_username
 FROM
     employees
-group by username, first_name, last_name, birth_date
+group by username
 having number_of_same_username > 1;
 		
 
@@ -150,13 +142,46 @@ having number_of_same_username > 1;
 -- a. Determine the historic average salary for each employee. 
 	-- When you hear, read, or think "for each" with regard to SQL, you'll probably be grouping by that exact column.
     describe salaries;
-    select to_date
-    from salaries;
+    select count(*)
+    from salaries
+    where year(to_date) = "9999"; #total num of current employees / 240124
     
+    select emp_no, avg(salary)
+    from salaries
+    group by emp_no; #this "GROUP BY" is returning unique values for non-aggregated columns/arrays; in this case - there would not be the same number of "avg(salary) for employee number"; there would be less salaries than there are employee numbers at potentially different salary grades
+    
+    -- steps:
+		-- select ea./all employees (can be with company or not?)
+        -- select and average their historic salary (sum every salary ever earned and devide by total number of unique salary grades)
+        -- from 'salaries' database
+        -- return this by emp number, historic average
+        
+
 -- b. Using the dept_emp table, count how many current employees work in each department. The query result should show 9 rows, one for each department and the employee count.
+
+use employees;
+describe dept_emp;
+
+select count(*)
+from dept_emp;
+
 -- c. Determine how many different salaries each employee has had. This includes both historic and current.
 -- d. Find the maximum salary for each employee.
 -- e. Find the minimum salary for each employee.
 -- f. Find the standard deviation of salaries for each employee.
 -- g. Now find the max salary for each employee where that max salary is greater than $150,000.
 -- h. Find the average salary for each employee where that average salary is between $80k and $90k.
+
+
+describe departments;
+show create table
+departments;
+
+/* 
+		CREATE TABLE `departments` (
+		  `dept_no` char(4) NOT NULL,
+		  `dept_name` varchar(40) NOT NULL,
+		  PRIMARY KEY (`dept_no`),
+		  UNIQUE KEY `dept_name` (`dept_name`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1 
+*/
