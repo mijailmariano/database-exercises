@@ -4,7 +4,7 @@
 -- 2. Write a query to to find all employees whose last name starts and ends with 'E'. Use concat() to combine their first and last name together as a single column named full_name.
 use employees;
 
-select concat(first_name, " ", last_name) 
+select first_name, last_name, concat(first_name, " ", last_name)
 as full_name 
 from employees 
 where last_name
@@ -22,7 +22,7 @@ order by full_name asc;
 
 -- 4. Find all employees hired in the 90s and born on Christmas. Use datediff() function to find how many days they have been working at the company (Hint: You will also need to use NOW() or CURDATE()),
 
-select round(datediff(curdate(), hire_date)) #here i am calculating and rounding the difference in days from today and employees' hire date
+select first_name, last_name, round(datediff(curdate(), hire_date)) #here i am calculating and rounding the difference in days from today and employees' hire date
 as total_tenure_in_days #here i am creating this new 'table' or column as something more descriptive of the result which in this case is total tenure in days
 from employees #i am telling my quary to select/work from the "employees" table 
 where hire_date #now in the precise table, i am telling the query to give me back employees' whose hire date was in the 1990s
@@ -34,7 +34,8 @@ order by total_tenure_in_days asc; #not needed, yet i want to organize the resul
 -- 5. Find the smallest and largest current salary from the salaries table.
 
 select min(salary), max(salary) 
-from salaries;
+from salaries
+where to_date > now(); # we query this line to identify employees who still work at the company. this should also filter for 'most current' salary
 		-- min salary = 38623
         -- max salary = 158220
 
