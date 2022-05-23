@@ -5,52 +5,49 @@
 use titles;
 describe titles;
 
-select count(distinct(title))
-from titles;
+SELECT 
+    COUNT(DISTINCT (title))
+FROM
+    titles;
 
-		# there are seven (7) unique titles from the titles table
+		SELECT 
+    last_name
+FROM
+    employees
+WHERE
+    last_name LIKE 'e%e'
+GROUP BY last_name;
 
--- 3. Write a query to to find a list of all unique last names of all employees that start and end with 'E' using GROUP BY.
-select last_name
-from employees
-where last_name
-like "e%e"
-group by last_name;
+		SELECT 
+    COUNT(DISTINCT (last_name))
+FROM
+    employees
+WHERE
+    last_name LIKE 'e%e';SELECT 
+    first_name, last_name
+FROM
+    employees
+WHERE
+    last_name LIKE 'e%e'
+GROUP BY first_name , last_name;
 
-		# there are five (5) unique last names that start and end with the letter "e"
-        
-select count(distinct(last_name)) # this is a secondary query check for the "GROUP BY" query above which should return similar results
-from employees
-where last_name
-like "e%e"; # check successful
-
-
--- 4. Write a query to to find all unique combinations of first and last names of all employees whose last names start and end with 'E'.
-
-select first_name, last_name
-from employees
-where last_name 
-like "e%e"
-group by first_name, last_name;
-
-select count(distinct(first_name)) # unique implying (1), therefore this query is essentially returning back all unique first and last name combinations = 640 
-from employees
-where last_name 
-like "e%e";
+SELECT 
+    COUNT(DISTINCT (first_name))
+FROM
+    employees
+WHERE
+    last_name LIKE 'e%e';
 
 
 -- 5. Write a query to find the unique last names with a 'q' but not 'qu'. Include those names in a comment in your sql code.
 
-select first_name, last_name
-from employees
-where last_name 
-like "%q%" # the '%' percentage sign used here reads, identify all last names containing the letter 'q'
-and last_name 
-not like "%qu%"; # the 'qu' in between % signs reads, AND do not identify last names that contain the 'qu' combination
-
--- 6. Add a COUNT() to your results (the query above) to find the number of employees with the same last name.
-
 SELECT 
+    first_name, last_name
+FROM
+    employees
+WHERE
+    last_name LIKE '%q%'
+        AND last_name NOT LIKE '%qu%';SELECT 
     COUNT(last_name), last_name
 FROM
     employees
@@ -66,8 +63,6 @@ GROUP BY last_name;
 */
 
 
-
--- 7. Find all all employees with first names 'Irena', 'Vidya', or 'Maya'. Use COUNT(*) and GROUP BY to find the number of employees for each gender with those names.
 
 SELECT 
     first_name, gender, COUNT(*)
@@ -87,42 +82,32 @@ ORDER BY first_name ASC;
 		'Vidya','F','81'
 */
 
--- 8. Using your query that generates a username for all of the employees...
-
--- a. generate a count employees for each unique username # wording may be a little misleading here. "unique" implies there is only one (1) of its kind; a better prompt is "generate a count employees of each username?" 
-
- select LOWER(CONCAT(SUBSTR(first_name, 1, 1),
-                    SUBSTR(last_name, 1, 4),
-                    '_',
-                    DATE_FORMAT(birth_date, '%m'),
-                    DATE_FORMAT(birth_date, '%y'))) AS username,
-                    count(*) as number_of_username
-FROM
-    employees
-group by username
-order by number_of_username desc;
-
-
--- b. Are there any duplicate usernames?
-
-	 # yes, there are several duplicate usernames.
- 
-
--- c. BONUS: How many duplicate usernames are there?
-
-
-        
 SELECT 
     LOWER(CONCAT(SUBSTR(first_name, 1, 1),
                     SUBSTR(last_name, 1, 4),
                     '_',
                     DATE_FORMAT(birth_date, '%m'),
                     DATE_FORMAT(birth_date, '%y'))) AS username,
-                    count(*) as number_of_same_username
+    COUNT(*) AS number_of_username
 FROM
     employees
-group by username
-having number_of_same_username > 1;
+GROUP BY username
+ORDER BY number_of_username DESC;
+
+
+-- b. Are there any duplicate usernames?
+
+	SELECT 
+    LOWER(CONCAT(SUBSTR(first_name, 1, 1),
+                    SUBSTR(last_name, 1, 4),
+                    '_',
+                    DATE_FORMAT(birth_date, '%m'),
+                    DATE_FORMAT(birth_date, '%y'))) AS username,
+    COUNT(*) AS number_of_same_username
+FROM
+    employees
+GROUP BY username
+HAVING number_of_same_username > 1;
 		
 
         
@@ -142,13 +127,16 @@ having number_of_same_username > 1;
 -- a. Determine the historic average salary for each employee. 
 	-- When you hear, read, or think "for each" with regard to SQL, you'll probably be grouping by that exact column.
     describe salaries;
-    select count(*)
-    from salaries
-    where year(to_date) = "9999"; #total num of current employees / 240124
-    
-    select emp_no, avg(salary)
-    from salaries
-    group by emp_no; #this "GROUP BY" is returning unique values for non-aggregated columns/arrays; in this case - there would not be the same number of "avg(salary) for employee number"; there would be less salaries than there are employee numbers at potentially different salary grades
+SELECT 
+    COUNT(*)
+FROM
+    salaries
+WHERE
+    YEAR(to_date) = '9999';SELECT 
+    emp_no, AVG(salary)
+FROM
+    salaries
+GROUP BY emp_no; #this "GROUP BY" is returning unique values for non-aggregated columns/arrays; in this case - there would not be the same number of "avg(salary) for employee number"; there would be less salaries than there are employee numbers at potentially different salary grades
     
     -- steps:
 		-- select ea./all employees (can be with company or not?)
@@ -162,8 +150,10 @@ having number_of_same_username > 1;
 use employees;
 describe dept_emp;
 
-select count(*)
-from dept_emp;
+SELECT 
+    COUNT(*)
+FROM
+    dept_emp;
 
 -- c. Determine how many different salaries each employee has had. This includes both historic and current.
 -- d. Find the maximum salary for each employee.
