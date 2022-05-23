@@ -9,17 +9,16 @@ from users, roles; # 24 total rows returned
 -- 2. Use join, left join, and right join to combine results from the users and roles tables as we did in the lesson. Before you run each query, guess the expected number of results
 
 # JOIN function
-
-select users.name as user_name, # iam selecting 'name' column from users table - renaming it as alias...
-roles.name as role_name # iam selecting 'name' column from role table - renaming it as alias
-from users # look specifically at the users table (where join will be initiated from? / inner join so may be done simultaneously...does table selection here matter?)
-join roles on users.role_id = roles.id; # match 1-for-1 values in user.role_id with roles.id and only join these values
+SELECT 
+    users.name AS user_name, roles.name AS role_name
+FROM
+    users
+        JOIN
+    roles ON users.role_id = roles.id; # match 1-for-1 values in user.role_id with roles.id and only join these values
 
 -- query should return 4 rows
 
-
 # LEFT JOIN function
-
 SELECT 
     users.name as user_name, roles.name as role_name
 FROM
@@ -29,48 +28,39 @@ FROM
 
 # will return 6 rows including 'JANE' and 'MIKE'
 
-
 # RIGHT JOIN function
-
-select users.name as user_name,
-roles.id as role_id
-from users
-right join roles on users.role_id = roles.id;
+SELECT 
+    users.name AS user_name, roles.id AS role_id
+FROM
+    users
+        RIGHT JOIN
+    roles ON users.role_id = roles.id;
 
 -- will return back five (5) rows matching all roles.id to user.role_id (duplicate 3 pair) regardless if there is a matching left value 1-4 unique roles.id + 1 duplicate
-
 
 -- 3. Although not explicitly covered in the lesson, aggregate functions like count can be used with join queries
 -- Use count and the appropriate join type to get a list of roles along with the number of users that has the role
 -- Hint: You will also need to use group by in the query.
 
-
 # i need to return a list of roles (1-4?)
 # count total number of users that match these roles
 # you want to also return only* unique values using "group by" function
 # since the roles are expressed from "roles table", i will run a 'right join' function
+SELECT 
+    roles.id AS role_id, COUNT(roles.id) AS role_count
+FROM
+    users
+        RIGHT JOIN
+    roles ON users.role_id = roles.id
+GROUP BY roles.id;
 
-select roles.id as role_id,
-count(roles.id) as role_count
-from users
-right join roles on users.role_id = roles.id
-group by roles.id;
-
--- Employees Database
+-- ---------- --
+# Employees Database
 -- 1. Use the employees database
 use employees;
 
 -- 2a. Using the example in the Associative Table Joins section as a guide, 
 -- 2b. write a query that shows each department along with the name of the current manager for that department
-
--- sample query below:
-SELECT CONCAT(e.first_name, ' ', e.last_name) AS full_name, d.dept_name
-FROM employees AS e
-JOIN dept_emp AS de
-  ON de.emp_no = e.emp_no
-JOIN departments AS d
-  ON d.dept_no = de.dept_no
-WHERE de.to_date = '9999-01-01' AND e.emp_no = 10001;
 
 -- example output:
  /* 
@@ -87,6 +77,44 @@ WHERE de.to_date = '9999-01-01' AND e.emp_no = 10001;
   Sales              | Hauke Zhang 
   */
 
+describe dept_manager;
+describe departments;
+describe dept_emp;
+
+select *
+from dept_emp; #this is a table showing respective department employees and the tenure in the department (also current employees); (emp_no / dept_no / from_date / to_date)
+
+select * 
+from departments; #this is a table that has each departments respective "key" (dept_no) matching key to department; (dept_no / dept_name)
+
+select * 
+from dept_manager; #this is a table showing respetive deptment managers (emp_no) and their tenure as department manager; (emp_no / dept_no / from_date / to_date)
+
+select *
+from employees; #this is a table showing employees' admin. information and tenure at the company; (emp_no / birth_date / first_name / last_name / gender / hire_date)
+
+#steps
+-- identify all current department managers
+-- consider left and right joins; here's why
+-- i want to tie department managers to respective employees and their name
+-- i also want to tie deparment managers to their respective department name 
+-- keep in mind that you only want to look for current* department managers given their to_date code denoted as (9999-01-01)
+
+
+SELECT 
+    dept_name AS 'Department Name',
+    CONCAT(first_name, ' ', last_name) AS 'Department Manager'
+FROM
+    dept_manager AS manager
+        JOIN
+    departments ON manager.dept_no = departments.dept_no
+        JOIN
+    employees ON manager.emp_no = employees.emp_no
+WHERE
+    manager.to_date = '9999-01-01'
+ORDER BY dept_name ASC;
+
+
 -- 3. Find the name of all departments currently managed by women
 -- example output:
 /*
@@ -98,6 +126,28 @@ Human Resources | Karsetn Sigstam
 Research        | Hilary Kambil
 */
 
+SELECT 
+    dept_name AS 'Department Name',
+    CONCAT(first_name, ' ', last_name) AS 'Department Manager'
+FROM
+    dept_manager AS manager
+        JOIN
+    departments ON manager.dept_no = departments.dept_no
+        JOIN
+    employees ON manager.emp_no = employees.emp_no
+WHERE
+    manager.to_date = '9999-01-01'
+        AND gender = 'f'
+ORDER BY dept_name ASC;
+
+/* 
+my output
+
+'Development','Leon DasSarma'
+'Finance','Isamu Legleitner'
+'Human Resources','Karsten Sigstam'
+'Research','Hilary Kambil'
+*/
 
 
 -- 4. Find the current titles of employees currently working in the Customer Service department
@@ -114,9 +164,71 @@ Staff              |  3574
 Technique Leader   |   241
 */
 
+-- steps
+-- 1. start by looking in the "titles" table
+-- 2. in titles <title> isolate the "customer service" department 
+-- 3. in titles <to_date> isolate all active/current* roles 
+-- 4. from titles <emp_no> COUNT total number of employee id
+
+-- select title as "Title",
+-- count(emp_no) as "Count"
+
+titles.tile as "Title",
+count(dept_emp.emp_no) as "Count"
+    titles
+        join
+   dept_emp using (emp_no)
+       join
+    departments using (dept_no)
+WHERE
+    titles.to_date > now()
+    and
+    dept_emp.to_date > now()
+    group by titles.tile;
 
 
+select titles.tile as "Title",
+count(
+from departments;
+SELECT 
+    COUNT(DISTINCT (title))
+FROM
+    titles;
 
+SELECT DISTINCT
+    (title), to_date
+FROM
+    titles
+WHERE
+    to_date = '9999-01-01';
+
+-- i want to to see which department contains all seven (7) unique employee roles
+
+SELECT 
+    COUNT(DISTINCT (titles.title)) AS 'number of dept titles',
+    dept_emp.dept_no AS 'department'
+FROM
+    dept_emp
+        NATURAL JOIN
+    titles
+        NATURAL JOIN
+    departments
+WHERE
+    to_date = '9999-01-01'
+GROUP BY dept_no;
+
+
+-- select titles.title as "Title", 
+-- count(titles.emp_no) as "Count"
+-- from dept_emp
+-- join departments on dept_emp.dept_no = departments.dept_no
+-- join employees on dept_emp.emp_no = employees.emp_no
+-- where dept_emp.to_date = "9999-01-01"
+-- group by departments.dept_name, dept_emp.dept_no;
+
+
+select *
+from titles;
 
 -- 5. Find the current salary of all current managers
 -- example output:
@@ -134,8 +246,27 @@ Research           | Hilary Kambil     |  79393
 Sales              | Hauke Zhang       | 101987
 */
 
-
-
+SELECT 
+    departments.dept_name AS 'Department Name',
+    CONCAT(employees.first_name,
+            ' ',
+            employees.last_name) AS 'Name',
+    salaries.salary AS 'Salary'
+FROM
+    dept_emp
+        JOIN
+    employees ON dept_emp.emp_no = employees.emp_no
+        JOIN
+    departments ON dept_emp.dept_no = departments.dept_no
+        JOIN
+    titles ON dept_emp.emp_no = titles.emp_no
+        JOIN
+    salaries ON dept_emp.emp_no = salaries.emp_no
+WHERE
+    title = 'manager'
+        AND titles.to_date = '9999-01-01'
+        AND salaries.to_date = '9999-01-01'
+ORDER BY departments.dept_name ASC;
 
 
 -- 6. Find the number of current employees in each department
@@ -156,6 +287,22 @@ Sales              | Hauke Zhang       | 101987
 +---------+--------------------+---------------+
 */
 
+SELECT 
+    departments.dept_no AS 'dept_no',
+    departments.dept_name AS 'dept_name',
+    COUNT(employees.emp_no) AS 'num_employees'
+FROM
+    dept_emp
+        NATURAL JOIN
+    employees
+        NATURAL JOIN
+    departments
+WHERE
+    dept_emp.to_date = '9999-01-01'
+GROUP BY departments.dept_no
+ORDER BY departments.dept_no ASC;
+
+
 
 
 -- 7. Which department has the highest average salary? Hint: Use current not historic information.
@@ -168,6 +315,22 @@ Sales              | Hauke Zhang       | 101987
 +-----------+----------------+
 */
 
+SELECT 
+    departments.dept_name AS 'dept_name',
+    AVG(salaries.salary) AS 'average_salary'
+FROM
+    departments
+        JOIN
+    dept_emp ON departments.dept_no = dept_emp.dept_no
+        JOIN
+    salaries ON dept_emp.emp_no = salaries.emp_no
+WHERE
+    salaries.to_date > NOW()
+        AND dept_emp.to_date > NOW()
+GROUP BY departments.dept_name
+ORDER BY AVG(salaries.salary) DESC
+LIMIT 1;
+
 
 -- 8. Who is the highest paid employee in the Marketing department?
 -- example output:
@@ -179,6 +342,24 @@ Sales              | Hauke Zhang       | 101987
 +------------+-----------+
 */
 
+SELECT 
+    employees.first_name AS 'first_name',
+    employees.last_name AS 'last_name'
+FROM
+    dept_emp
+        JOIN
+    employees ON dept_emp.emp_no = employees.emp_no
+        JOIN
+    departments ON dept_emp.dept_no = departments.dept_no
+        JOIN
+    salaries ON dept_emp.emp_no = salaries.emp_no
+WHERE
+    departments.dept_name = 'marketing'
+        AND salaries.to_date > NOW()
+ORDER BY salaries.salary DESC
+LIMIT 1;
+
+
 
 -- 9. Which current department manager has the highest salary?
 /*example output:
@@ -188,6 +369,29 @@ Sales              | Hauke Zhang       | 101987
 | Vishwani   | Minakawa  | 106491 | Marketing |
 +------------+-----------+--------+-----------+
 */
+SELECT 
+    employees.first_name AS 'first_name',
+    employees.last_name AS 'last_name',
+    salaries.salary AS 'salary',
+    departments.dept_name AS 'dept_name'
+FROM
+    dept_emp
+        JOIN
+    employees ON dept_emp.emp_no = employees.emp_no
+        JOIN
+    departments ON dept_emp.dept_no = departments.dept_no
+        JOIN
+    titles ON dept_emp.emp_no = titles.emp_no
+        JOIN
+    salaries ON dept_emp.emp_no = salaries.emp_no
+WHERE
+    titles.title = 'manager'
+        AND titles.to_date > NOW()
+        AND salaries.to_date > NOW()
+ORDER BY salaries.salary DESC
+LIMIT 1;
+
+
 
 
 -- 10. Determine the average salary for each department. Use all salary information and round your results
@@ -215,7 +419,17 @@ Sales              | Hauke Zhang       | 101987
 +--------------------+----------------+
 */
 
-
+SELECT 
+    departments.dept_name AS 'dept_name',
+    ROUND(AVG(salaries.salary)) AS 'average_salary'
+FROM
+    dept_emp
+        JOIN
+    salaries ON dept_emp.emp_no = salaries.emp_no
+        JOIN
+    departments ON dept_emp.dept_no = departments.dept_no
+GROUP BY departments.dept_name
+ORDER BY ROUND(AVG(salaries.salary)) DESC;
 
 
 -- 11. Bonus Find the names of all current employees, their department name, and their current manager's name
