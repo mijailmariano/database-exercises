@@ -37,16 +37,27 @@ from employees;
 
 -- 3. How many employees (current or previous) were born in each decade?
 
-select min(year(birth_date)) as "youngest_decade",
-max(year(birth_date)) as "oldest_decade"
-from employees;
+select min(year(birth_date)) as "oldest_birth_year",
+max(year(birth_date)) as "youngest_birth_year"
+from employees; # from this query, I understand the oldest birth year is 1952 and the younest birth year is in 1965 which can be classified as two decades 
 
 select
 count(case when year(birth_date) between "1950" and "1959" then birth_date else NULL end) as "Born Between 1950-1959",
 count(case when year(birth_date) between "1960" and "1969" then birth_date else NULL end) as "Born Between 1960-1969"
 from employees;
 
-# what I don't do or capture in this query are potential future employees that may fall outside of the 1950-1960s birth years
+# what I don't capture but would like to in this query are potential future employees that may fall outside of the 1950-1960s birth years
+# here we go...
+
+-- select count(year(birth_date)) as "Count",
+-- CASE 
+-- when year(birth_date) between "1950" and "1959" then "Born Between 1950-1959"
+-- when year(birth_date) between "1960" and "1969" then "Born Between 1960-1969"
+-- ELSE "OUTSIDE_RANGE"
+-- END AS "Birth_Year_Decade"
+-- from employees
+-- group by "birth_year_decade";
+
 
 -- 4. What is the current average salary for each of the following department groups: R&D, Sales & Marketing, Prod & QM, Finance & HR, Customer Service?
 
