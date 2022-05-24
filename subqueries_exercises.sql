@@ -154,7 +154,7 @@ select (select count(emp_no)
 from salaries
 where to_date > now() 
 and salary > ((select max(salary) from salaries where to_date > now())) - ((select std(salary) from salaries where to_date > now()))) / (select count(*) from salaries 
-where to_date > now()) * 100 as "percentage_of_total_salaries"
+where to_date > now()) * 100 as "percentage_of_total_salaries";
 
 # current salaries within one (1) standard deviation of the highest salary make-up ~0.04% of total salaries 
 
@@ -162,5 +162,79 @@ where to_date > now()) * 100 as "percentage_of_total_salaries"
 
 -- BONUS
 -- Find all the department names that currently have female managers
+
+SELECT 
+    dept_name
+FROM
+    departments
+WHERE
+    dept_no IN (SELECT 
+            dept_no
+        FROM
+            dept_manager
+        WHERE
+            emp_no IN (SELECT 
+                    emp_no
+                FROM
+                    employees
+                WHERE
+                    gender = 'f')
+                AND to_date > NOW());
+/*
+'Development'
+'Finance'
+'Human Resources'
+'Research'
+*/
+select departments.dept_name as "department_name"
+from dept_manager join departments using (dept_no) join employees using (emp_no)
+where dept_manager.to_date > now()
+and employees.gender = "f";
+
 -- Find the first and last name of the employee with the highest salary
+
+SELECT 
+    first_name, last_name
+FROM
+    employees
+WHERE
+    emp_no IN (SELECT 
+            emp_no
+        FROM
+            salaries
+        WHERE
+            salary = (SELECT 
+                    MAX(salary)
+                FROM
+                    salaries)
+                AND to_date > NOW());
+
+select salaries.salary, 
+employees.last_name
+from salaries
+join employees using (emp_no)
+where to_date > now()
+and salary = (select max(salary) from salaries);
+
 -- Find the department name that the employee with the highest salary works in.
+
+SELECT 
+    dept_name
+FROM
+    departments
+WHERE
+    dept_no IN (SELECT 
+            dept_no
+        FROM
+            dept_emp
+        WHERE
+            emp_no IN (SELECT 
+                    emp_no
+                FROM
+                    salaries
+                WHERE
+                    salary = (SELECT 
+                            MAX(salary)
+                        FROM
+                            salaries)
+                        AND dept_emp.to_date > NOW()));
