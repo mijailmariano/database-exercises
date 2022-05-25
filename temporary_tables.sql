@@ -19,6 +19,12 @@ use kalpana_1823;
 select *
 from employees_with_departments;
 
+-- "good practice" when creating temporary tables
+-- 1. create the general query(ies) in the appropriate schema and using the table where the data is stored
+-- 2. ensure these queries work correctly 
+-- 4. navigate to the appropriate schema where your temporary table will be created
+-- 5. "create temporary table" <table_name> and insert the queries as necessary/in order of expected calculation
+-- 6. ensure your temporary table works appropriately by using "select * from <table_name>"
 
 -- a. Add a column named full_name to this table. 
 -- It should be a VARCHAR whose length is the sum of the lengths of the first name and last name columns
@@ -68,7 +74,7 @@ select *
 from payment_copy;
 
 update payment_copy set amount = amount * 100; 
-alter table payment_copy change column amount amount_in_cents INT not null;
+alter table payment_copy change column amount amount_in_pennies INT not null;
 
 select *
 from payment_copy;
@@ -80,8 +86,44 @@ from payment_copy;
 use employees;
 
 SELECT salary, 
-(salary - ((SELECT AVG(salary) FROM salaries)) / (SELECT stddev(salary) FROM salaries)) AS zscore 
-FROM salaries;
+(salary - ((SELECT AVG(salary) FROM salaries) / (SELECT stddev(salary) FROM salaries))) AS zscore 
+FROM salaries
+order by salary desc;
+
+#what I need to calculater
+-- avg current salary
+-- avg historical salary
+-- current standard deviation
+-- zscores 
+
+# additional info. required
+-- current emp. department name
+
+# average current salary average
+select dept_name as "Deparment",
+avg(salary) as "CUR_Salary_AVG"
+from salaries
+join dept_emp using (emp_no)
+join departments using (dept_no)
+where
+dept_emp.to_date > now()
+and
+salaries.to_date > now()
+group by dept_name;
+
+
+# average historical salary
+SELECT dept_name as "Department",
+AVG(salary) as "HIST_Salary_AVG"
+FROM salaries
+join dept_emp using (emp_no)
+join departments using (dept_no)
+Group by dept_name;
+
+
+#salary population standard deviation (converted to 1k measurement)
+ SELECT stddev(salary) / 1000 FROM salaries;
+
 
 
 -- 4. Hint Consider that the following code will produce the z score for current salaries.

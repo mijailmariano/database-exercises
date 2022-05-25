@@ -477,3 +477,10 @@ WHERE
         FROM
             salaries)
         AND dept_emp.to_date > NOW();
+
+use employees;
+
+-- BOOLEAN MATCH / CAST
+select dept_name,
+dept_name = "research" as is_research
+from departments;

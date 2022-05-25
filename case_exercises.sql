@@ -6,34 +6,62 @@
 -- and a new column 'is_current_employee' that is a 1 if the employee is still with the company and 0 if not
 
 use employees;
-select employees.first_name as "first name", 
-employees.last_name as "last name",
-departments.dept_no as "department number",
-employees.hire_date as "start date",
-salaries.to_date as "end date",
-if(salaries.to_date > curdate(), True, False) as "is_current_employee"
-from employees
-join dept_emp using (emp_no)
-join departments using (dept_no)
-join salaries using (emp_no)
-order by is_current_employee desc;
+SELECT 
+    employees.first_name AS 'first name',
+    employees.last_name AS 'last name',
+    departments.dept_no AS 'department number',
+    employees.hire_date AS 'start date',
+    salaries.to_date AS 'end date',
+    IF(salaries.to_date > CURDATE(),
+        TRUE,
+        FALSE) AS 'is_current_employee'
+FROM
+    employees
+        JOIN
+    dept_emp USING (emp_no)
+        JOIN
+    departments USING (dept_no)
+        JOIN
+    salaries USING (emp_no)
+ORDER BY is_current_employee DESC;
 
+
+select distinct(emp_no)
+from employees;
 
 
 -- 2. Write a query that returns all employee names (previous and current), 
 -- and a new column 'alpha_group' that returns 'A-H', 'I-Q', or 'R-Z' depending on the first letter of their last name
 
-select employees.first_name as "first_name",
-employees.last_name as "last_name",
+use employees;
+select First_name,
+last_name,
 case 
-when employees.last_name between "A%" and "H%" then "A-H"
-when employees.last_name between "I%" and "Q%" then "I-Q"
-when employees.last_name between "R%" and "Z%" then "R-Z"
+when left(last_name, 1) <= "H" then "A-H"
+when substr(last_name, 1, 1) <= "Q" then "I-Q"
+when left(last_name, 1) <= "Z" then "R-Z"
 else last_name
 end as "alpha_group"
 from employees;
 
-#why is this query not registering the first letter of certain last names?
+-- -------------- 
+#difficulties with the following example query line registering "max bin characters" (e.g., H, Q, Z) 
+/*
+CASE WHEN last_name between "A%" and "H%" THEN "A-H"
+*/
+
+SELECT 
+    employees.first_name AS 'first_name',
+    employees.last_name AS 'last_name',
+    CASE
+        WHEN SUBSTR(employees.last_name, 1, 1) BETWEEN 'A' AND 'H' THEN 'A-H'
+        WHEN SUBSTR(employees.last_name, 1, 1) BETWEEN 'I' AND 'Q' THEN 'I-Q'
+        WHEN SUBSTR(employees.last_name, 1, 1) BETWEEN 'R' AND 'Z' THEN 'R-Z'
+        ELSE last_name
+    END AS 'Alpha_Group'
+FROM
+    employees;
+
 
 -- 3. How many employees (current or previous) were born in each decade?
 
