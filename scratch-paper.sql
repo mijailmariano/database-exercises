@@ -1,3 +1,91 @@
+# sql assessmen May 25th
+
+use employees;
+select concat(first_name, emp_no) as something
+from employees
+where last_name like "ma%";
+
+select now();
+
+SELECT * FROM employees 
+ORDER BY last_name DESC, n;
+
+describe employees;
+
+select first_name, count(*)
+from employees
+group by birth_date;
+SELECT SUBSTR("Data Scienterrific", 10, LENGTH("Data Scienterrific"));
+
+
+select *
+from employees
+left join dept_emp on dept_emp.emp_no = employees.emp_no;
+
+select concat(first_name, " ", last_name) as fullname
+from employees;
+
+select first_name, 
+last_name, 
+dept_no
+from employees
+join 
+dept_emp
+on employees.emp_no =
+dept_emp.emp_no;
+
+select *
+from departments
+order by dept_no;
+
+select dept_no,
+dept_name
+from departments
+order by dept_no;
+
+
+select avg(n),
+min(n),
+max(n),
+std(n)
+from numbers;
+
+select avg(salary),
+min(salary),
+max(salary),
+sum(salary),
+std(salary)
+from salaries;
+
+select distinct(last_name)
+from employees;
+
+select count(distinct(last_name))
+from employees;
+
+select dept_no,
+from_date,
+employees.emp_no
+from employees
+join
+dept_emp on employees.emp_no = dept_emp.emp_no;
+
+
+select
+distinct(make),
+count(make)
+from cars
+
+
+select distinct(last_name)
+from employees;
+
+select distinct(last_name),
+count(last_name)
+from employees
+group by last_name
+order by count(last_name) desc;
+
 -- 5. Find the current salary of all current managers
 -- example output:
 /*
